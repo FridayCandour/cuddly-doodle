@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "unihub-backend",
+    "slug": "unihub-backend",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#2E2E3C"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "userInterfaceStyle": "automatic",
+      "bundleIdentifier": "com.fridaycandour.unihub"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#2E2E3C"
+      },
+      "userInterfaceStyle": "automatic",
+      "package": "com.fridaycandour.unihub"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "description": "unihub-backend\n\n",
+    "githubUrl": "https://github.com/FridayCandour/unihub-backend"
+  }
+}
