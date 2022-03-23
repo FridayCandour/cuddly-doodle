@@ -26,13 +26,18 @@ export default function AppNavigator() {
     }
   });
 
-  return next === true ? (
+  return (
     <NavigationContainer theme={theme.mode === "dark" ? darkTheme : lightTheme}>
       <TabStacks />
     </NavigationContainer>
-  ) : (
-    <NavigationContainer theme={theme.mode === "dark" ? darkTheme : lightTheme}>
-      <LoginScreenStack />
-    </NavigationContainer>
   );
+  // return next === true ? (
+  //   <NavigationContainer theme={theme.mode === "dark" ? darkTheme : lightTheme}>
+  //     <TabStacks />
+  //   </NavigationContainer>
+  // ) : (
+  //   <NavigationContainer theme={theme.mode === "dark" ? darkTheme : lightTheme}>
+  //     <LoginScreenStack />
+  //   </NavigationContainer>
+  // );
 }

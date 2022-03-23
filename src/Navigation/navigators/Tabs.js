@@ -27,7 +27,7 @@ const Tabs = ({ params }) => {
         ],
       }}
     >
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Home"
         component={Home}
         options={{
@@ -52,7 +52,7 @@ const Tabs = ({ params }) => {
             />
           ),
         }}
-      />
+      /> */}
 
       <Tab.Screen
         name="ClassRoom"

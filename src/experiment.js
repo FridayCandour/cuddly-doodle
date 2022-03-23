@@ -1,5 +1,5 @@
 import axios from "axios";
-import crypto from "crypto";
+// import crypto from "crypto";
 /**
  *  *  EVERY THING FROM HERE ARE EXPERIMENTS BASED ON THE NEEDS OF THE PROJECT
  * @TODOS
@@ -10,35 +10,35 @@ import crypto from "crypto";
  * *** need a data validator
  */
 
-export function uuidSuper(num = 10) {
-  crypto.getRandomValues = (arr) => crypto.randomBytes(arr.length);
-  const btoa = (text) => {
-    return Buffer.from(text, "binary").toString("base64");
-  };
-  function generateUID(length) {
-    length = Math.round(length) || 10;
-    return btoa(
-      Array.from(crypto.getRandomValues(new Uint8Array(length)))
-        .map((b) => String.fromCharCode(b))
-        .join("")
-    )
-      .replace(/[+/]/g, "")
-      .substring(0, length);
-  }
+// export function uuidSuper(num = 10) {
+//   crypto.getRandomValues = (arr) => crypto.randomBytes(arr.length);
+//   const btoa = (text) => {
+//     return Buffer.from(text, "binary").toString("base64");
+//   };
+//   function generateUID(length) {
+//     length = Math.round(length) || 10;
+//     return btoa(
+//       Array.from(crypto.getRandomValues(new Uint8Array(length)))
+//         .map((b) => String.fromCharCode(b))
+//         .join("")
+//     )
+//       .replace(/[+/]/g, "")
+//       .substring(0, length);
+//   }
 
-  function dec2hex(dec) {
-    return dec.toString(16).padStart(2, "0");
-  }
-  function generateId(len) {
-    len = Math.round(len);
-    return Array.from(
-      crypto.getRandomValues(new Uint8Array(len || 10)),
-      dec2hex
-    ).join("");
-  }
+//   function dec2hex(dec) {
+//     return dec.toString(16).padStart(2, "0");
+//   }
+//   function generateId(len) {
+//     len = Math.round(len);
+//     return Array.from(
+//       crypto.getRandomValues(new Uint8Array(len || 10)),
+//       dec2hex
+//     ).join("");
+//   }
 
-  return generateUID(num / 2) + generateId(num / 2);
-}
+//   return generateUID(num / 2) + generateId(num / 2);
+// }
 
 // console.log(uuidSuper(18));
 
@@ -474,9 +474,9 @@ export const fetcher = async (url, method, head, data) => {
       obj.headers = error.response.headers;
     } else if (error.request) {
       obj.request = error.request;
-    } else {
       obj.error = error.message;
     }
+    obj.error = error.message;
     return obj;
   });
   return asis;

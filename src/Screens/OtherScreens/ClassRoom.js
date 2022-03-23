@@ -9,72 +9,98 @@ import {
   FormContainer4,
   FormContainer5,
   FormContainer6,
+  FormContainer7,
+  FormContainer8,
 } from "./Registration";
-const work = ["Domain", "Course", "Resource", "Post", "User", "Advertiser"];
+const work = [
+  "Domains",
+  "Courses",
+  "Resources",
+  "Notifications",
+  "Payments",
+  "Advertisers",
+  "Users",
+  "Posts",
+];
 
-const ClassRoom = ({ navigation }) => {
-  // get the selected courses from the route object
-
+const ClassRoom = () => {
   const [view, setView] = useState(0);
-
   if (view === 0) {
     return (
       <Container>
-        <ScrollView>
-          <Header navigation={navigation} view={view} setView={setView} />
-          <FormContainer1 navigation={navigation} />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Header view={view} setView={setView} />
+          <FormContainer1 />
         </ScrollView>
       </Container>
     );
   } else if (view === 1) {
     return (
       <Container>
-        <ScrollView>
-          <Header navigation={navigation} view={view} setView={setView} />
-          <FormContainer2 navigation={navigation} />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Header view={view} setView={setView} />
+          <FormContainer2 />
         </ScrollView>
       </Container>
     );
   } else if (view === 2) {
     return (
       <Container>
-        <ScrollView>
-          <Header navigation={navigation} view={view} setView={setView} />
-          <FormContainer3 navigation={navigation} />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Header view={view} setView={setView} />
+          <FormContainer3 />
         </ScrollView>
       </Container>
     );
   } else if (view === 3) {
     return (
       <Container>
-        <ScrollView>
-          <Header navigation={navigation} view={view} setView={setView} />
-          <FormContainer4 navigation={navigation} />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Header view={view} setView={setView} />
+          <FormContainer8 />
         </ScrollView>
       </Container>
     );
   } else if (view === 4) {
     return (
       <Container>
-        <ScrollView>
-          <Header navigation={navigation} view={view} setView={setView} />
-          <FormContainer5 navigation={navigation} />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Header view={view} setView={setView} />
+          <FormContainer4 />
         </ScrollView>
       </Container>
     );
   } else if (view === 5) {
     return (
       <Container>
-        <ScrollView>
-          <Header navigation={navigation} view={view} setView={setView} />
-          <FormContainer6 navigation={navigation} />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Header view={view} setView={setView} />
+          <FormContainer5 />
+        </ScrollView>
+      </Container>
+    );
+  } else if (view === 6) {
+    return (
+      <Container>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Header view={view} setView={setView} />
+          <FormContainer6 />
+        </ScrollView>
+      </Container>
+    );
+  } else if (view === 7) {
+    return (
+      <Container>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Header view={view} setView={setView} />
+          <FormContainer7 />
         </ScrollView>
       </Container>
     );
   }
 };
 
-const Header = ({ navigation, course, view, setView }) => {
+const Header = ({ course, view, setView }) => {
   return (
     <View
       style={{
@@ -142,7 +168,7 @@ const Header = ({ navigation, course, view, setView }) => {
           {course}
         </Text>
       </View>
-      <TopNavigationBar navigation={navigation} view={view} setView={setView} />
+      <TopNavigationBar view={view} setView={setView} />
     </View>
   );
 };
@@ -159,7 +185,7 @@ const TopNavigationBar = ({ view, setView }) => {
       <FlatList
         keyExtractor={(item, index) => "space" + index}
         horizontal
-        showsHorizontalScrollIndicator={true}
+        showsHorizontalScrollIndicator={false}
         data={work}
         renderItem={({ item, index }) => (
           <Gam
@@ -207,10 +233,10 @@ const Gam = styled.TouchableOpacity`
   flex-direction: row;
 `;
 
-const Texti = styled.Text`
-  color: ${({ color }) => color};
-  font-size: ${({ size }) => size}px;
-  text-align: center;
-`;
-
 export default ClassRoom;
+
+// borderColor: "red",
+// borderTopWidth: 2,
+// borderLeftWidth: 2,
+// borderRightWidth: 2,
+// borderBottomWidth: 2,

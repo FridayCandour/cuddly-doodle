@@ -1,17 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components/native";
-import {
-  View,
-  ScrollView,
-  FlatList,
-  StyleSheet,
-  Image,
-  Alert,
-} from "react-native";
+import { View, ScrollView, StyleSheet, Image, Alert } from "react-native";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { Dimensions } from "react-native";
-import { Images } from "Constants";
-import { McTabIcon } from "../../Components";
 import { fetcher } from "../../experiment.js";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -31,6 +22,8 @@ const storeData = async (key, value) => {
 const Login = ({ navigation }) => {
   // managing state
   const [screen, setScreen] = useState({ login: "none", reg: "none" });
+  const [Error, setError] = useState("");
+
   const [save, saver] = useState({
     name: null,
     email: null,
@@ -38,18 +31,36 @@ const Login = ({ navigation }) => {
   });
 
   // send the request to the backend
-  function send() {
+  function serve() {
     return async () => {
-      const request = await fetcher("/admin/register", "POST", {}, save);
-      const admin = await request.data;
-      if (admin.status === 201) {
-        await storeData("admin", admin);
-        setScreen({ login: "flex", reg: "none" });
-      } else {
-        Alert(admin.data + "  and  " + admin.message);
+      try {
+        const request = await fetcher(
+          "http://localhost:3000/admin/register",
+          "POST",
+          {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+          save
+        );
+        const admin = await request.data;
+        if (admin && admin.status === 201) {
+          await storeData("admin", admin);
+          // setError(JSON.stringify(admin.data));
+          setScreen({ login: "flex", reg: "none" });
+          return true;
+        } else {
+          setError(admin.message);
+          Alert(admin.data + "  and  " + admin.message);
+          return false;
+        }
+      } catch (error) {
+        return false;
       }
     };
   }
+  const send = serve();
+
   return (
     <Container>
       <ScrollView>
@@ -61,6 +72,7 @@ const Login = ({ navigation }) => {
           navigation={navigation}
         />
         <RegComp
+          Error={Error}
           send={send}
           screen={screen}
           setScreen={setScreen}
@@ -141,11 +153,6 @@ const Comp = ({ setScreen }) => {
       </View>
       <View
         style={{
-          // borderColor: "red",
-          // borderTopWidth: 2,
-          // borderLeftWidth: 2,
-          // borderRightWidth: 2,
-          // borderBottomWidth: 2,
           flexDirection: "column",
           alignContent: "center",
           justifyContent: "center",
@@ -217,7 +224,7 @@ const LoginComp = ({ navigation, screen, setScreen }) => {
     </View>
   );
 };
-const RegComp = ({ send, save, saver, screen, setScreen }) => {
+const RegComp = ({ Error, send, save, saver, screen, setScreen }) => {
   return (
     <View
       style={{
@@ -230,6 +237,7 @@ const RegComp = ({ send, save, saver, screen, setScreen }) => {
         justifyContent: "center",
       }}
     >
+      <Texti size={16}>{Error}</Texti>
       <Texti size={16}>Register to Unihub</Texti>
       <Input placeholder="your name" saver={saver} save={save} field="name" />
       <Input placeholder="your email" saver={saver} save={save} field="email" />
@@ -242,7 +250,8 @@ const RegComp = ({ send, save, saver, screen, setScreen }) => {
       <Button
         onPress={() => {
           const go = send();
-          if (go) {
+          if (!go) {
+            Alert("error occured");
             setScreen({ login: "flex", reg: "none" });
           }
         }}
@@ -306,50 +315,12 @@ const Texti = styled.Text`
   line-height: 14px;
   color: #3448c5;
 `;
-const McImage = styled.Image`
-  border: 3px grey solid;
-`;
 
 const styles = StyleSheet.create({
   Comp: {
     width: windowWidth,
     minHeight: windowHeight,
     flex: 1,
-    // borderColor: "red",
-    // borderTopWidth: 2,
-    // borderLeftWidth: 2,
-    // borderRightWidth: 2,
-    // borderBottomWidth: 2,
-  },
-  tag: {
-    marginTop: 12,
-    alignItems: "stretch",
-    justifyContent: "center",
-  },
-  title: {
-    marginTop: 10,
-    marginHorizontal: 10,
-    padding: 4,
-    borderRadius: 30,
-    backgroundColor: "#736f84",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  course: {
-    marginTop: 18,
-    width: "100%",
-    alignItems: "stretch",
-    justifyContent: "space-evenly",
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  item: {
-    margin: "auto",
-    borderRadius: 14,
-    padding: 8,
-    backgroundColor: "#A0A3BD",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
 

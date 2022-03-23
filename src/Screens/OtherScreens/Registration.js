@@ -1,68 +1,604 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components/native";
-import { View, Text, TextInput, Button, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  ActivityIndicator,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { McText } from "Components";
-import axios from "axios";
-// localhost:3000/admin/create/domain
+import { fetcher } from "../../experiment.js";
 
-/**
- * an axois base fetcher
- * @param url string
- * @param method string
- * @param head object
- * @param data object
- * @returns any
- */
+// const con = function (params) {
+//   let obj = {
+//     email: "fridaymichaels662@gmail.com",
+//     password: "uiedbooker662",
+//     yeah_that_freaking_thing: true,
+//   };
+// };
+const domains = [
+  { title: "maths", course: 10, users: 100 },
+  { title: "english", course: 20, users: 100 },
+  { title: "history", course: 20, users: 100 },
+  { title: "music", course: 20, users: 100 },
+  { title: "economics", course: 20, users: 100 },
+  { title: "physics", course: 20, users: 100 },
+  { title: "magic", course: 20, users: 100 },
+  { title: "maths", course: 10, users: 100 },
+  { title: "english", course: 20, users: 100 },
+];
 
-export const fetcher = async (url, method, head, data) => {
-  const asis = await axios({
-    method: method,
-    url: url,
-    headers: head,
-    data: data,
-  }).catch(function (error) {
-    const obj = {};
-    if (error.response) {
-      obj.data = error.response.data;
-      obj.status = error.response.status;
-      obj.headers = error.response.headers;
-    } else if (error.request) {
-      obj.request = error.request;
-    } else {
-      obj.error = error.message;
-    }
-    return obj;
-  });
-  return asis;
+const courses = [
+  { title: "maths", reources: 100 },
+  { title: "english", reources: 100 },
+  { title: "history", reources: 100 },
+  { title: "music", reources: 100 },
+  { title: "economics", reources: 100 },
+  { title: "physics", reources: 100 },
+  { title: "magic", reources: 100 },
+  { title: "maths", reources: 100 },
+  { title: "english", reources: 100 },
+];
+
+const resources = [
+  { course: "maths", title: "maths", type: "pdf" },
+  { course: "english", title: "english", type: "pdf" },
+  { course: "history", title: "history", type: "pdf" },
+  { course: "music", title: "music", type: "pdf" },
+  { course: "economics", title: "economics", type: "pdf" },
+  { course: "physics", title: "physics", type: "pdf" },
+  { course: "magic", title: "magic", type: "pdf" },
+  { course: "maths", title: "maths", type: "pdf" },
+  { course: "english", title: "english", type: "pdf" },
+];
+
+const paymentRequests = [
+  {
+    name: "friday",
+    email: "fridaymaxtour@gmail.com",
+    time: "2 days ago",
+    bank: "maths",
+    amount: 100,
+    account_number: 100,
+  },
+  {
+    name: "fridaysh",
+    email: "fridaymaxtour@gmail.com",
+    time: "2 days ago",
+    bank: "english",
+    amount: 100,
+    account_number: 100,
+  },
+  {
+    name: "fridayry",
+    email: "fridaymaxtour@gmail.com",
+    time: "2 days ago",
+    bank: "history",
+    amount: 100,
+    account_number: 100,
+  },
+  {
+    name: "friday",
+    email: "fridaymaxtour@gmail.com",
+    time: "2 days ago",
+    bank: "music",
+    amount: 100,
+    account_number: 100,
+  },
+  {
+    name: "fridaymics",
+    email: "fridaymaxtour@gmail.com",
+    time: "2 days ago",
+    bank: "economics",
+    amount: 100,
+    account_number: 100,
+  },
+  {
+    name: "fridaycs",
+    email: "fridaymaxtour@gmail.com",
+    time: "2 days ago",
+    bank: "physics",
+    amount: 100,
+    account_number: 100,
+  },
+  {
+    name: "friday",
+    email: "fridaymaxtour@gmail.com",
+    time: "2 days ago",
+    bank: "magic",
+    amount: 100,
+    account_number: 100,
+  },
+  {
+    name: "friday",
+    email: "fridaymaxtour@gmail.com",
+    time: "2 days ago",
+    bank: "maths",
+    amount: 100,
+    account_number: 100,
+  },
+  {
+    name: "fridaysh",
+    email: "fridaymaxtour@gmail.com",
+    time: "2 days ago",
+    bank: "english",
+    amount: 100,
+    account_number: 100,
+  },
+];
+
+const notifications = [
+  {
+    title: "unihub has a new versoin, try updately right away",
+    time: "2 days ago",
+    in_app: false,
+  },
+  {
+    title: "unihub has a new versoin, try updately right awaysh",
+    time: "2 days ago",
+    in_app: false,
+  },
+  {
+    title: "unihub has a new versoin, try updately right awayry",
+    time: "2 days ago",
+    in_app: false,
+  },
+  {
+    title: "unihub has a new versoin, try updately right away",
+    time: "2 days ago",
+    in_app: false,
+  },
+  {
+    title: "unihub has a new versoin, try updately right awaymics",
+    time: "2 days ago",
+    in_app: false,
+  },
+  {
+    title: "unihub has a new versoin, try updately right awaycs",
+    time: "2 days ago",
+    in_app: false,
+  },
+  {
+    title: "unihub has a new versoin, try updately right away",
+    time: "2 days ago",
+    in_app: false,
+  },
+  {
+    title: "unihub has a new versoin, try updately right away",
+    time: "2 days ago",
+    in_app: false,
+  },
+  {
+    title: "unihub has a new versoin, try updately right awaysh",
+    time: "2 days ago",
+    in_app: false,
+  },
+];
+
+const DomainModal = ({
+  title,
+  save,
+  saver,
+  endPoint,
+  setLoading,
+  setError,
+  setSuccess,
+  setRes,
+}) => {
+  return (
+    <View style={styles.add}>
+      <Header2Section>
+        <McText left={16} color="#A0A3BD" semi size={18}>
+          {title}
+        </McText>
+      </Header2Section>
+      <Input
+        placeholder="Domain title"
+        saver={saver}
+        save={save}
+        field="title"
+      />
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={async () => {
+          setLoading(true);
+          const domain = await fetcher(
+            "https://unihub.trgwii.com/admin/" + endPoint + "/domain",
+            "POST",
+            {},
+            save
+          );
+
+          if (domain.error) {
+            setError(true);
+          } else {
+            setSuccess(true);
+          }
+          setRes(domain.data.message);
+        }}
+      >
+        <Texti color="white">Make Request</Texti>
+      </TouchableOpacity>
+    </View>
+  );
 };
 
-export const FormContainer1 = ({ navigation }) => {
-  const [save, saver] = useState({
-    title: "",
-  });
+const CourseModal = ({
+  title,
+  save,
+  saver,
+  endPoint,
+  setLoading,
+  setError,
+  setSuccess,
+  setRes,
+}) => {
+  return (
+    <View style={styles.add}>
+      <Header2Section>
+        <McText left={16} color="#A0A3BD" semi size={18}>
+          {title}
+        </McText>
+      </Header2Section>
+      <Input
+        placeholder="Course title"
+        saver={saver}
+        save={save}
+        field="title"
+      />
+      <Input
+        placeholder="Domain title"
+        saver={saver}
+        save={save}
+        field="domain"
+      />
+      <Input
+        placeholder="course welcome text"
+        saver={saver}
+        save={save}
+        field="welcome"
+      />
 
+      <Input
+        placeholder="upload course thumbnail"
+        saver={saver}
+        save={save}
+        field="file"
+      />
+
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={async () => {
+          setLoading(true);
+          const course = await fetcher(
+            "https://unihub.trgwii.com/admin/" + endPoint + "/course",
+            "POST",
+            {},
+            save
+          );
+          if (course.error) {
+            setError(true);
+          } else {
+            setSuccess(true);
+          }
+          setRes(course.data.message);
+        }}
+      >
+        <Texti color="white">Make Request</Texti>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const ResourseModal = ({
+  title,
+  save,
+  saver,
+  endPoint,
+  setLoading,
+  setError,
+  setSuccess,
+  setRes,
+}) => {
+  return (
+    <View style={styles.add}>
+      <Header2Section>
+        <McText left={16} color="#A0A3BD" semi size={18}>
+          {title}
+        </McText>
+      </Header2Section>
+      <Input
+        placeholder="resource title"
+        saver={saver}
+        save={save}
+        field="title"
+      />
+      <Texti color="#faad14">only pdf, json, video</Texti>
+      <Input
+        placeholder="resource type"
+        saver={saver}
+        save={save}
+        field="type"
+      />
+      <Input
+        placeholder="course title"
+        saver={saver}
+        save={save}
+        field="courseTitle"
+      />
+
+      <Input
+        placeholder="upload resource "
+        saver={saver}
+        save={save}
+        field="file"
+      />
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={async () => {
+          setLoading(true);
+          const resource = await fetcher(
+            "https://unihub.trgwii.com/admin/" + endPoint + "/resource",
+            "POST",
+            {},
+            save
+          );
+          if (resource.error) {
+            setError(true);
+          } else {
+            setSuccess(true);
+          }
+          setRes(resource.data.message);
+        }}
+      >
+        <Texti color="white">Make Request</Texti>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const NotificationModal = ({
+  title,
+  save,
+  saver,
+  setLoading,
+  setError,
+  setSuccess,
+  setRes,
+}) => {
+  return (
+    <View style={styles.add}>
+      <Header2Section>
+        <McText left={16} color="#A0A3BD" semi size={18}>
+          {title}
+        </McText>
+      </Header2Section>
+      <Input
+        placeholder="notification title"
+        saver={saver}
+        save={save}
+        field="title"
+      />
+      <Input placeholder="content" saver={saver} save={save} field="content" />
+      <Input placeholder="link" saver={saver} save={save} field="link" />
+      <Input placeholder="in app?" saver={saver} save={save} field="inApp" />
+      <Input
+        placeholder="upload image"
+        saver={saver}
+        save={save}
+        field="file"
+      />
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={async () => {
+          setLoading(true);
+          const notification = await fetcher(
+            "https://unihub.trgwii.com/admin/create/notification",
+            "POST",
+            {},
+            save
+          );
+          if (notification.error) {
+            setError(true);
+          } else {
+            setSuccess(true);
+          }
+          setRes(notification.data.message);
+        }}
+      >
+        <Texti color="white">Make Request</Texti>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const ContentModal = ({ data }) => {
+  return (
+    <TouchableWithoutFeedback>
+      <FlatList
+        keyExtractor={(i, index) => "_stats" + index}
+        showsVerticalScrollIndicator={false}
+        vertical
+        data={data}
+        contentContainerStyle={{
+          display: "none",
+          borderRadius: 20,
+          backgroundColor: "#4dccc6",
+          paddingVertical: 20,
+        }}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity
+            style={{
+              marginBottom: 10,
+              margin: "auto",
+              width: "90%",
+              padding: 4,
+              borderRadius: 10,
+              backgroundColor: "whitesmoke",
+              alignItems: "center",
+              justifyContent: "space-between",
+              shadowColor: "black",
+              shadowOffset: {
+                width: 1,
+                height: 1,
+              },
+              shadowRadius: 5,
+              shadowOpacity: 0.5,
+              elevation: 5,
+              borderRadius: 8,
+              minHeight: "20%",
+              flexDirection: "row",
+              paddingHorizontal: 8,
+            }}
+          >
+            <Texti size={14} color="grey">
+              {item.title}
+              {item.name}
+            </Texti>
+            <Batch>{item.course}</Batch>
+            <Batch>{item.reources}</Batch>
+            <Batch>{item.level}</Batch>
+            <Batch>{item.bank}</Batch>
+            <Batch>{item.amount}</Batch>
+            <Batch>{item.account_number}</Batch>
+          </TouchableOpacity>
+        )}
+      />
+    </TouchableWithoutFeedback>
+  );
+};
+
+const Loader = () => {
   return (
     <View
       style={{
         width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <ActivityIndicator style={{ marginTop: 200 }} />
+      <Text>Updating Backend...</Text>
+    </View>
+  );
+};
+
+const ErrorBox = ({ text, setError, setLoading }) => {
+  return (
+    <View
+      style={{
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Texti size={19}>Transaction Failed!</Texti>
+
+      <Response text={text} />
+      <Button
+        title="Get back!"
+        onPress={() => {
+          setError(false);
+          setLoading(false);
+        }}
+      />
+    </View>
+  );
+};
+
+const Response = ({ text }) => {
+  return (
+    <View
+      style={{
+        padding: 15,
+        borderColor: "yellow",
+        borderBottomWidth: 2,
+        borderTopWidth: 2,
+        borderLeftWidth: 2,
+        borderRightWidth: 2,
+        borderRadius: 12,
+        width: "90%",
+        height: "60%",
+        margin: "auto",
+      }}
+    >
+      <Text>{text}</Text>
+    </View>
+  );
+};
+
+const SuccessBox = ({ text, setSuccess, setLoading }) => {
+  return (
+    <View
+      style={{
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Text>Transaction Successfull </Text>
+      <Response text={text} />
+      <Button
+        title="Get back!"
+        onPress={() => {
+          setSuccess(false);
+          setLoading(false);
+        }}
+      />
+    </View>
+  );
+};
+
+export const FormContainer1 = () => {
+  // FIXME: here i will get admin credentials and pass it downwards
+  const [save, saver] = useState(null);
+  useEffect(() => {
+    // i should retrieve the cre from storage here
+    saver({
+      name: "friday",
+      email: "fridaymichaels662@gmail.com",
+      password: "uiedbooker662",
+      yeah_that_freaking_thing: true,
+      title: "",
+    });
+  }, []);
+
+  const [res, setRes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isError, setError] = useState(false);
+  const [isSuccess, setSuccess] = useState(false);
+
+  return !loading ? (
+    <View
+      style={{
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
       <Header2Section>
         <McText left={16} color="#A0A3BD" semi size={18}>
-          Create a Domain
+          All Domains
         </McText>
       </Header2Section>
-      <Input
-        placeholder="Domain title"
-        saver={saver}
+      <ContentModal data={domains} />
+      <DomainModal
+        endPoint="create"
+        title="Create a Domain"
         save={save}
-        field="title"
-      />
-      <Button
-        title="Make request"
-        onPress={() => {
-          fetcher("localhost:3000/admin/create/domain", "POST", {}, save);
-        }}
+        saver={saver}
+        setLoading={setLoading}
+        setError={setError}
+        setRes={setRes}
+        setSuccess={setSuccess}
       />
       <Rules>
         <Text>NB:</Text>
@@ -75,41 +611,16 @@ export const FormContainer1 = ({ navigation }) => {
       </Rules>
 
       <Seperator />
-      <Header2Section>
-        <McText left={16} color="#A0A3BD" semi size={18}>
-          Update a Domain
-        </McText>
-      </Header2Section>
-
-      <Input
-        placeholder="Domain title"
-        saver={saver}
+      <DomainModal
+        endPoint="delete"
+        title="Delete a Domain"
         save={save}
-        field="title"
-      />
-      <Button title="Make request" />
-      <Rules>
-        <Text>NB:</Text>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure it's spelt correctly
-        </McText>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure The domain don't already exists in the database
-        </McText>
-      </Rules>
-      <Seperator />
-      <Header2Section>
-        <McText left={16} color="#A0A3BD" semi size={18}>
-          Delete a Domain
-        </McText>
-      </Header2Section>
-      <Input
-        placeholder="Domain title"
         saver={saver}
-        save={save}
-        field="title"
+        setLoading={setLoading}
+        setError={setError}
+        setRes={setRes}
+        setSuccess={setSuccess}
       />
-      <Button title="Make request" />
       <Rules>
         <Text>NB:</Text>
         <McText left={10} color="#faad14" size={15}>
@@ -120,14 +631,37 @@ export const FormContainer1 = ({ navigation }) => {
         </McText>
       </Rules>
     </View>
+  ) : isError ? (
+    <ErrorBox text={res} setError={setError} setLoading={setLoading} />
+  ) : isSuccess ? (
+    <SuccessBox text={res} setSuccess={setSuccess} setLoading={setLoading} />
+  ) : (
+    <Loader />
   );
 };
 
-export const FormContainer2 = ({ navigation }) => {
-  const [save, saver] = useState({
-    title: "",
-  });
-  return (
+export const FormContainer2 = () => {
+  // FIXME: here i will get admin credentials and pass it downwards
+  const [save, saver] = useState(null);
+  useEffect(() => {
+    // i should retrieve the cre from storage here
+    saver({
+      name: "friday",
+      email: "fridaymichaels662@gmail.com",
+      password: "uiedbooker662",
+      yeah_that_freaking_thing: true,
+      title: "",
+      domain: "",
+      welcome: "",
+    });
+  }, []);
+
+  const [res, setRes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isError, setError] = useState(false);
+  const [isSuccess, setSuccess] = useState(false);
+
+  return !loading ? (
     <View
       style={{
         width: "100%",
@@ -135,37 +669,31 @@ export const FormContainer2 = ({ navigation }) => {
     >
       <Header2Section>
         <McText left={16} color="#A0A3BD" semi size={18}>
-          Create a course
+          All Courses
         </McText>
       </Header2Section>
-      <Input
-        placeholder="course title"
-        saver={saver}
+      <ContentModal data={courses} />
+      <CourseModal
+        title="Create a Course"
         save={save}
-        field="title"
-      />
-      <Input
-        placeholder="course level"
         saver={saver}
-        save={save}
-        field="level"
+        endPoint="create"
+        setRes={setRes}
+        setLoading={setLoading}
+        setError={setError}
+        setSuccess={setSuccess}
       />
-
-      <Input
-        placeholder="course welcome text"
+      <Seperator />
+      <CourseModal
+        title="Delete a Course"
+        save={save}
         saver={saver}
-        save={save}
-        field="welcome"
+        endPoint="delete"
+        setRes={setRes}
+        setLoading={setLoading}
+        setError={setError}
+        setSuccess={setSuccess}
       />
-
-      <Input
-        placeholder="upload course thumbnail"
-        saver={saver}
-        save={save}
-        field="thumbnail"
-      />
-
-      <Button title="Make request" />
       <Rules>
         <Text>NB:</Text>
         <McText left={10} color="#faad14" size={15}>
@@ -173,81 +701,41 @@ export const FormContainer2 = ({ navigation }) => {
         </McText>
         <McText left={10} color="#faad14" size={15}>
           Make sure The course don't already exists in the database
-        </McText>
-      </Rules>
-      <Seperator />
-      <Header2Section>
-        <McText left={16} color="#A0A3BD" semi size={18}>
-          Update a course
-        </McText>
-      </Header2Section>
-      <Input
-        placeholder="course title"
-        saver={saver}
-        save={save}
-        field="title"
-      />
-      <Input
-        placeholder="course level"
-        saver={saver}
-        save={save}
-        field="level"
-      />
-
-      <Input
-        placeholder="course welcome text"
-        saver={saver}
-        save={save}
-        field="welcome"
-      />
-
-      <Input
-        placeholder="upload course thumbnail"
-        saver={saver}
-        save={save}
-        field="thumbnail"
-      />
-      <Button title="Make request" />
-      <Rules>
-        <Text>NB:</Text>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure it's spelt correctly
-        </McText>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure The course don't already exists in the database
-        </McText>
-      </Rules>
-      <Seperator />
-      <Header2Section>
-        <McText left={16} color="#A0A3BD" semi size={18}>
-          Delete a course
-        </McText>
-      </Header2Section>
-      <Input
-        placeholder="course title"
-        saver={saver}
-        save={save}
-        field="title"
-      />
-      <Button title="Make request" />
-      <Rules>
-        <Text>NB:</Text>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure it's spelt correctly
-        </McText>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure The course already exists in the database
         </McText>
       </Rules>
     </View>
+  ) : isError ? (
+    <ErrorBox text={res} setError={setError} setLoading={setLoading} />
+  ) : isSuccess ? (
+    <SuccessBox text={res} setSuccess={setSuccess} setLoading={setLoading} />
+  ) : (
+    <Loader />
   );
 };
 
-export const FormContainer3 = ({ navigation }) => {
-  const [save, saver] = useState({
-    title: "",
-  });
-  return (
+export const FormContainer3 = () => {
+  // FIXME: here i will get admin credentials and pass it downwards
+  const [save, saver] = useState(null);
+  useEffect(() => {
+    // i should retrieve the cre from storage here
+    saver({
+      name: "friday",
+      email: "fridaymichaels662@gmail.com",
+      password: "uiedbooker662",
+      yeah_that_freaking_thing: true,
+      title: "",
+      domain: "",
+      type: "",
+      courseTitle: "",
+      resourceTitle: "",
+    });
+  }, []);
+
+  const [res, setRes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isError, setError] = useState(false);
+  const [isSuccess, setSuccess] = useState(false);
+  return !loading ? (
     <View
       style={{
         width: "100%",
@@ -255,98 +743,20 @@ export const FormContainer3 = ({ navigation }) => {
     >
       <Header2Section>
         <McText left={16} color="#A0A3BD" semi size={18}>
-          Create a resource
+          All Resource
         </McText>
       </Header2Section>
-      <Input
-        placeholder="resource title"
-        saver={saver}
+      <ContentModal data={resources} />
+      <ResourseModal
+        title="Create a resource"
         save={save}
-        field="title"
-      />
-      <Input
-        placeholder="resource type"
         saver={saver}
-        save={save}
-        field="type"
+        endPoint="create"
+        setRes={setRes}
+        setLoading={setLoading}
+        setError={setError}
+        setSuccess={setSuccess}
       />
-      <Input
-        placeholder="course title"
-        saver={saver}
-        save={save}
-        field="courseTitle"
-      />
-
-      <Input
-        placeholder="upload resource thumbnail"
-        saver={saver}
-        save={save}
-        field="thumbnail"
-      />
-      <Input
-        placeholder="upload resource "
-        saver={saver}
-        save={save}
-        field="acces"
-      />
-
-      <Button title="Make request" />
-      <Rules>
-        <Text>NB:</Text>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure it's spelt correctly
-        </McText>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure The resource don't already exists in the database
-        </McText>
-      </Rules>
-      <Seperator />
-      <Header2Section>
-        <McText left={16} color="#A0A3BD" semi size={18}>
-          Update a resource
-        </McText>
-      </Header2Section>
-      <Input
-        placeholder="resource title"
-        saver={saver}
-        save={save}
-        field="title"
-      />
-      <Input
-        placeholder="resource type"
-        saver={saver}
-        save={save}
-        field="type"
-      />
-      <Input
-        placeholder="course title"
-        saver={saver}
-        save={save}
-        field="courseTitle"
-      />
-
-      <Input
-        placeholder="upload resource thumbnail"
-        saver={saver}
-        save={save}
-        field="thumbnail"
-      />
-      <Input
-        placeholder="upload resource "
-        saver={saver}
-        save={save}
-        field="acces"
-      />
-      <Button title="Make request" />
-      <Rules>
-        <Text>NB:</Text>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure it's spelt correctly
-        </McText>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure The resource don't already exists in the database
-        </McText>
-      </Rules>
       <Seperator />
       <Header2Section>
         <McText left={16} color="#A0A3BD" semi size={18}>
@@ -357,9 +767,34 @@ export const FormContainer3 = ({ navigation }) => {
         placeholder="resource title"
         saver={saver}
         save={save}
-        field="title"
+        field="resourceTitle"
       />
-      <Button title="Make request" />
+      <Input
+        placeholder="course title"
+        saver={saver}
+        save={save}
+        field="courseTitle"
+      />
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={async () => {
+          setLoading(true);
+          const resource = await fetcher(
+            "https://unihub.trgwii.com/admin/delete/resource",
+            "POST",
+            {},
+            save
+          );
+          if (resource.error) {
+            setError(true);
+          } else {
+            setSuccess(true);
+          }
+          setRes(resource.data.message);
+        }}
+      >
+        <Texti color="white">Make Request</Texti>
+      </TouchableOpacity>
       <Rules>
         <Text>NB:</Text>
         <McText left={10} color="#faad14" size={15}>
@@ -370,10 +805,16 @@ export const FormContainer3 = ({ navigation }) => {
         </McText>
       </Rules>
     </View>
+  ) : isError ? (
+    <ErrorBox text={res} setError={setError} setLoading={setLoading} />
+  ) : isSuccess ? (
+    <SuccessBox text={res} setSuccess={setSuccess} setLoading={setLoading} />
+  ) : (
+    <Loader />
   );
 };
 
-export const FormContainer4 = ({ navigation }) => {
+export const FormContainer7 = () => {
   const [save, saver] = useState({
     title: "",
   });
@@ -389,7 +830,9 @@ export const FormContainer4 = ({ navigation }) => {
         </McText>
       </Header2Section>
       <Input placeholder="Post ID" saver={saver} save={save} field="postID" />
-      <Button title="Make request" />
+      <TouchableOpacity style={styles.btn}>
+        <Texti color="white">Make Request</Texti>
+      </TouchableOpacity>
       <Rules>
         <Text>NB:</Text>
         <McText left={10} color="#faad14" size={15}>
@@ -403,7 +846,7 @@ export const FormContainer4 = ({ navigation }) => {
   );
 };
 
-export const FormContainer5 = ({ navigation }) => {
+export const FormContainer6 = () => {
   const [save, saver] = useState({
     title: "",
   });
@@ -425,7 +868,9 @@ export const FormContainer5 = ({ navigation }) => {
         save={save}
         field="subscription"
       />
-      <Button title="Make request" />
+      <TouchableOpacity style={styles.btn}>
+        <Texti color="white">Make Request</Texti>
+      </TouchableOpacity>
       <Rules>
         <Text>NB:</Text>
         <McText left={10} color="#faad14" size={15}>
@@ -439,7 +884,7 @@ export const FormContainer5 = ({ navigation }) => {
   );
 };
 
-export const FormContainer6 = ({ navigation }) => {
+export const FormContainer5 = () => {
   const [save, saver] = useState({
     title: "",
   });
@@ -463,7 +908,9 @@ export const FormContainer6 = ({ navigation }) => {
         field="password"
       />
 
-      <Button title="Make request" />
+      <TouchableOpacity style={styles.btn}>
+        <Texti color="white">Make Request</Texti>
+      </TouchableOpacity>
       <Rules>
         <Text>NB:</Text>
         <McText left={10} color="#faad14" size={15}>
@@ -474,6 +921,86 @@ export const FormContainer6 = ({ navigation }) => {
         </McText>
       </Rules>
     </View>
+  );
+};
+
+export const FormContainer4 = () => {
+  const [save, saver] = useState({
+    title: "",
+  });
+  return (
+    <View
+      style={{
+        width: "100%",
+      }}
+    >
+      <Header2Section>
+        <McText left={16} color="#A0A3BD" semi size={18}>
+          All payment requests
+        </McText>
+      </Header2Section>
+      <ContentModal data={paymentRequests} />
+      <TouchableOpacity style={styles.btn}>
+        <Texti color="white">Make Request</Texti>
+      </TouchableOpacity>
+
+      {
+        //FIXME: the response container not ready
+      }
+    </View>
+  );
+};
+
+export const FormContainer8 = () => {
+  // FIXME: here i will get admin credentials and pass it downwards
+  const [save, saver] = useState(null);
+  useEffect(() => {
+    // i should retrieve the cre from storage here
+    saver({
+      name: "friday",
+      email: "fridaymichaels662@gmail.com",
+      password: "uiedbooker662",
+      yeah_that_freaking_thing: true,
+      title: "",
+      content: "",
+      link: "",
+      inApp: "no",
+    });
+  }, []);
+
+  const [res, setRes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isError, setError] = useState(false);
+  const [isSuccess, setSuccess] = useState(false);
+  return !loading ? (
+    <View
+      style={{
+        width: "100%",
+      }}
+    >
+      <Header2Section>
+        <McText left={16} color="#A0A3BD" semi size={18}>
+          All Notifications
+        </McText>
+      </Header2Section>
+      <ContentModal data={notifications} />
+      <NotificationModal
+        title="Create a Notification"
+        save={save}
+        saver={saver}
+        endPoint="create"
+        setRes={setRes}
+        setLoading={setLoading}
+        setError={setError}
+        setSuccess={setSuccess}
+      />
+    </View>
+  ) : isError ? (
+    <ErrorBox text={res} setError={setError} setLoading={setLoading} />
+  ) : isSuccess ? (
+    <SuccessBox text={res} setSuccess={setSuccess} setLoading={setLoading} />
+  ) : (
+    <Loader />
   );
 };
 
@@ -509,6 +1036,32 @@ const Input = ({ placeholder, saver, save, field }) => {
   );
 };
 
+const styles = StyleSheet.create({
+  add: {
+    width: "80%",
+    justifyContent: "center",
+    margin: "auto",
+    marginBottom: 20,
+  },
+  cre: {
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "center",
+    width: "100%",
+  },
+  btn: {
+    // backgroundColor: "#08b9fc",
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: "#A0A3BD",
+    margin: "auto",
+    alignSelf: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
+// #A0A3BD
+
 const Header2Section = styled.View`
   margin: 30px 0px 6px auto;
   justify-content: flex-start;
@@ -516,6 +1069,12 @@ const Header2Section = styled.View`
   flex-direction: row;
   padding-left: 20px;
   width: 100%;
+`;
+
+const Texti = styled.Text`
+  color: ${({ color }) => color};
+  font-size: ${({ size }) => size}px;
+  text-align: center;
 `;
 
 const Rules = styled.View`
@@ -536,3 +1095,13 @@ const Seperator = styled.View`
   border-radius: 4px;
 `;
 // #A0A3BD
+const Batch = styled.Text`
+  background-color: #eeeeee; //#bbc7cc;
+  justify-content: center;
+  align-items: center;
+  padding: 9px;
+  font-weight: 800;
+  color: grey;
+  text-align: center;
+  border-radius: 10px;
+`;

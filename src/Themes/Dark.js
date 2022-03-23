@@ -1,5 +1,5 @@
 import { DarkTheme } from "@react-navigation/native";
-DarkTheme.colors.background = "#4f5161";
+DarkTheme.colors.background = "#31394e";
 const Dark = {
   dark: true,
   ...DarkTheme,
