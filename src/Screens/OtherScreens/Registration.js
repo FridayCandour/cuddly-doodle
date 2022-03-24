@@ -12,15 +12,36 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { McText } from "Components";
-import { fetcher } from "../../experiment.js";
+import { fetcher, uuidSuper } from "../../experiment.js";
 
-// const con = function (params) {
-//   let obj = {
-//     email: "fridaymichaels662@gmail.com",
-//     password: "uiedbooker662",
-//     yeah_that_freaking_thing: true,
-//   };
-// };
+const convertToUsefulContent = function (obj) {
+  let i = 0;
+  let out = [];
+  for (const key in obj) {
+    i++;
+    if (i > 1) {
+      if (!out[1]) {
+        out[1] = [];
+        out[1].push(obj[key]);
+        continue;
+      } else {
+        out[1].push(obj[key]);
+        continue;
+      }
+    }
+    out.push(obj[key]);
+  }
+  return out;
+};
+
+const con = (arr) => {
+  const sorted = [];
+  for (let i = 0; i < arr.length; i++) {
+    sorted.push(convertToUsefulContent(arr[i]));
+  }
+  return sorted;
+};
+
 const domains = [
   { title: "maths", course: 10, users: 100 },
   { title: "english", course: 20, users: 100 },
@@ -32,17 +53,16 @@ const domains = [
   { title: "maths", course: 10, users: 100 },
   { title: "english", course: 20, users: 100 },
 ];
-
 const courses = [
-  { title: "maths", reources: 100 },
-  { title: "english", reources: 100 },
-  { title: "history", reources: 100 },
-  { title: "music", reources: 100 },
-  { title: "economics", reources: 100 },
-  { title: "physics", reources: 100 },
-  { title: "magic", reources: 100 },
-  { title: "maths", reources: 100 },
-  { title: "english", reources: 100 },
+  { title: "maths", domain: "maths", reources: 100 },
+  { title: "english", domain: "english", reources: 100 },
+  { title: "history", domain: "history", reources: 100 },
+  { title: "music", domain: "music", reources: 100 },
+  { title: "economics", domain: "economics", reources: 100 },
+  { title: "physics", domain: "physics", reources: 100 },
+  { title: "magic", domain: "magic", reources: 100 },
+  { title: "maths", domain: "maths", reources: 100 },
+  { title: "english", domain: "english", reources: 100 },
 ];
 
 const resources = [
@@ -208,7 +228,7 @@ const DomainModal = ({
         onPress={async () => {
           setLoading(true);
           const domain = await fetcher(
-            "https://unihub.trgwii.com/admin/" + endPoint + "/domain",
+            "http://localhost:3000/admin/" + endPoint + "/domain",
             "POST",
             {},
             save
@@ -276,7 +296,7 @@ const CourseModal = ({
         onPress={async () => {
           setLoading(true);
           const course = await fetcher(
-            "https://unihub.trgwii.com/admin/" + endPoint + "/course",
+            "http://localhost:3000/admin/" + endPoint + "/course",
             "POST",
             {},
             save
@@ -343,7 +363,7 @@ const ResourseModal = ({
         onPress={async () => {
           setLoading(true);
           const resource = await fetcher(
-            "https://unihub.trgwii.com/admin/" + endPoint + "/resource",
+            "http://localhost:3000/admin/" + endPoint + "/resource",
             "POST",
             {},
             save
@@ -398,7 +418,7 @@ const NotificationModal = ({
         onPress={async () => {
           setLoading(true);
           const notification = await fetcher(
-            "https://unihub.trgwii.com/admin/create/notification",
+            "http://localhost:3000/admin/create/notification",
             "POST",
             {},
             save
@@ -418,30 +438,31 @@ const NotificationModal = ({
 };
 
 const ContentModal = ({ data }) => {
+  const goods = con(data);
   return (
     <TouchableWithoutFeedback>
       <FlatList
         keyExtractor={(i, index) => "_stats" + index}
         showsVerticalScrollIndicator={false}
         vertical
-        data={data}
+        data={goods}
         contentContainerStyle={{
-          display: "none",
+          // display: "none",
           borderRadius: 20,
           backgroundColor: "#4dccc6",
-          paddingVertical: 20,
+          padding: 10,
+          width: "97.8%",
         }}
         renderItem={({ item, index }) => (
           <TouchableOpacity
             style={{
               marginBottom: 10,
-              margin: "auto",
-              width: "90%",
+              width: "100%",
               padding: 4,
               borderRadius: 10,
               backgroundColor: "whitesmoke",
               alignItems: "center",
-              justifyContent: "space-between",
+              justifyContent: "space-around",
               shadowColor: "black",
               shadowOffset: {
                 width: 1,
@@ -451,21 +472,87 @@ const ContentModal = ({ data }) => {
               shadowOpacity: 0.5,
               elevation: 5,
               borderRadius: 8,
-              minHeight: "20%",
               flexDirection: "row",
+              paddingHorizontal: 4,
+            }}
+          >
+            <Texti size={14} color="grey">
+              {item[0]}
+            </Texti>
+            {item[1].map((cont, index) => (
+              <Batch key={uuidSuper(29) + index}>{cont}</Batch>
+            ))}
+          </TouchableOpacity>
+        )}
+      />
+    </TouchableWithoutFeedback>
+  );
+};
+
+const PaymentModal = ({ data }) => {
+  const goods = con(data);
+  return (
+    <TouchableWithoutFeedback>
+      <FlatList
+        keyExtractor={(i, index) => "_stats" + index}
+        showsVerticalScrollIndicator={false}
+        vertical
+        data={goods}
+        contentContainerStyle={{
+          // display: "none",
+          borderRadius: 20,
+          backgroundColor: "#4dccc6",
+          padding: 10,
+          width: "97.8%",
+        }}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity
+            style={{
+              marginBottom: 10,
+              width: "100%",
+              padding: 14,
+              borderRadius: 10,
+              backgroundColor: "whitesmoke",
+              alignItems: "flex-start",
+              justifyContent: "center",
+              shadowColor: "black",
+              shadowOffset: {
+                width: 1,
+                height: 1,
+              },
+              shadowRadius: 5,
+              shadowOpacity: 0.5,
+              elevation: 5,
+              borderRadius: 8,
               paddingHorizontal: 8,
             }}
           >
             <Texti size={14} color="grey">
-              {item.title}
-              {item.name}
+              {item[0]}
             </Texti>
-            <Batch>{item.course}</Batch>
-            <Batch>{item.reources}</Batch>
-            <Batch>{item.level}</Batch>
-            <Batch>{item.bank}</Batch>
-            <Batch>{item.amount}</Batch>
-            <Batch>{item.account_number}</Batch>
+            {item[1].map((cont, index) => (
+              <Batch key={uuidSuper(29) + index}>{cont}</Batch>
+            ))}
+
+            <View
+              style={{
+                flexDirection: "row",
+                margin: "auto",
+              }}
+            >
+              <TouchableOpacity
+                style={[styles.btn, { marginHorizontal: 14 }]}
+                onPress={async () => {}}
+              >
+                <Texti color="lightgreen">Accept</Texti>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.btn, { marginHorizontal: 14 }]}
+                onPress={async () => {}}
+              >
+                <Texti color="red">Decline</Texti>
+              </TouchableOpacity>
+            </View>
           </TouchableOpacity>
         )}
       />
@@ -580,8 +667,7 @@ export const FormContainer1 = () => {
     <View
       style={{
         width: "100%",
-        justifyContent: "center",
-        alignItems: "center",
+        marginHorizontal: 4,
       }}
     >
       <Header2Section>
@@ -665,6 +751,7 @@ export const FormContainer2 = () => {
     <View
       style={{
         width: "100%",
+        marginHorizontal: 4,
       }}
     >
       <Header2Section>
@@ -739,6 +826,7 @@ export const FormContainer3 = () => {
     <View
       style={{
         width: "100%",
+        marginHorizontal: 4,
       }}
     >
       <Header2Section>
@@ -780,7 +868,7 @@ export const FormContainer3 = () => {
         onPress={async () => {
           setLoading(true);
           const resource = await fetcher(
-            "https://unihub.trgwii.com/admin/delete/resource",
+            "http://localhost:3000/admin/delete/resource",
             "POST",
             {},
             save
@@ -854,6 +942,7 @@ export const FormContainer6 = () => {
     <View
       style={{
         width: "100%",
+        marginHorizontal: 4,
       }}
     >
       <Header2Section>
@@ -892,6 +981,7 @@ export const FormContainer5 = () => {
     <View
       style={{
         width: "100%",
+        marginHorizontal: 4,
       }}
     >
       <Header2Section>
@@ -932,6 +1022,8 @@ export const FormContainer4 = () => {
     <View
       style={{
         width: "100%",
+        marginBottom: 50,
+        marginHorizontal: 4,
       }}
     >
       <Header2Section>
@@ -939,11 +1031,7 @@ export const FormContainer4 = () => {
           All payment requests
         </McText>
       </Header2Section>
-      <ContentModal data={paymentRequests} />
-      <TouchableOpacity style={styles.btn}>
-        <Texti color="white">Make Request</Texti>
-      </TouchableOpacity>
-
+      <PaymentModal data={paymentRequests} />
       {
         //FIXME: the response container not ready
       }
@@ -976,6 +1064,7 @@ export const FormContainer8 = () => {
     <View
       style={{
         width: "100%",
+        marginHorizontal: 4,
       }}
     >
       <Header2Section>
@@ -1074,6 +1163,7 @@ const Header2Section = styled.View`
 const Texti = styled.Text`
   color: ${({ color }) => color};
   font-size: ${({ size }) => size}px;
+  font-weight: 800;
   text-align: center;
 `;
 
@@ -1095,13 +1185,13 @@ const Seperator = styled.View`
   border-radius: 4px;
 `;
 // #A0A3BD
+// background-color: #eeeeee;
 const Batch = styled.Text`
-  background-color: #eeeeee; //#bbc7cc;
   justify-content: center;
   align-items: center;
-  padding: 9px;
+  padding: 4px;
   font-weight: 800;
   color: grey;
   text-align: center;
-  border-radius: 10px;
+  border-radius: 14px;
 `;
