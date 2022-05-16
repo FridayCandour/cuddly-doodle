@@ -30,9 +30,7 @@ const App = () => {
         alignItems: "center",
         justifyContent: "center",
       }}
-    >
-      <ActivityIndicator size="small"></ActivityIndicator>
-    </ImageBackground>
+    />
   );
 };
 

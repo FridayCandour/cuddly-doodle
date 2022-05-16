@@ -58,20 +58,6 @@ const Profile = ({ navigation }) => {
           }}
         />
       </SwitchSection>
-      <SwitchSection style={{ flexDirection: "column", width: 200 }}>
-        <Button
-          onPress={() => {
-            navigation.navigate("Home");
-          }}
-          title="Statistics"
-        />
-        <Button
-          onPress={() => {
-            navigation.navigate("ClassRoom");
-          }}
-          title="Work space"
-        />
-      </SwitchSection>
     </Container>
   );
 };

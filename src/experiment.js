@@ -1,5 +1,5 @@
 import axios from "axios";
-import crypto from "crypto";
+// import crypto from "crypto";
 /**
  *  *  EVERY THING FROM HERE ARE EXPERIMENTS BASED ON THE NEEDS OF THE PROJECT
  * @TODOS
@@ -11,33 +11,33 @@ import crypto from "crypto";
  */
 
 export function uuidSuper(num = 10) {
-  crypto.getRandomValues = (arr) => crypto.randomBytes(arr.length);
-  const btoa = (text) => {
-    return Buffer.from(text, "binary").toString("base64");
-  };
-  function generateUID(length) {
-    length = Math.round(length) || 10;
-    return btoa(
-      Array.from(crypto.getRandomValues(new Uint8Array(length)))
-        .map((b) => String.fromCharCode(b))
-        .join("")
-    )
-      .replace(/[+/]/g, "")
-      .substring(0, length);
-  }
+  // crypto.getRandomValues = (arr) => crypto.randomBytes(arr.length);
+  // const btoa = (text) => {
+  //   return Buffer.from(text, "binary").toString("base64");
+  // };
+  // function generateUID(length) {
+  //   length = Math.round(length) || 10;
+  //   return btoa(
+  //     Array.from(crypto.getRandomValues(new Uint8Array(length)))
+  //       .map((b) => String.fromCharCode(b))
+  //       .join("")
+  //   )
+  //     .replace(/[+/]/g, "")
+  //     .substring(0, length);
+  // }
 
-  function dec2hex(dec) {
-    return dec.toString(16).padStart(2, "0");
-  }
-  function generateId(len) {
-    len = Math.round(len);
-    return Array.from(
-      crypto.getRandomValues(new Uint8Array(len || 10)),
-      dec2hex
-    ).join("");
-  }
-
-  return generateUID(num / 2) + generateId(num / 2);
+  // function dec2hex(dec) {
+  //   return dec.toString(16).padStart(2, "0");
+  // }
+  // function generateId(len) {
+  //   len = Math.round(len);
+  //   return Array.from(
+  //     crypto.getRandomValues(new Uint8Array(len || 10)),
+  //     dec2hex
+  //   ).join("");
+  // }
+  return Date.now().toString(36);
+  // return generateUID(num / 2) + generateId(num / 2);
 }
 
 // console.log(uuidSuper(18));
@@ -452,7 +452,9 @@ export function timeResolver(_1stTime = Date()) {
 // i have  a problem with the minute, sometimes it just show something else
 
 /**
- * an axois base fetcher
+ * An axios based fetcher
+ * ----------------------
+ *
  * @param url string
  * @param method string
  * @param head object
@@ -461,11 +463,12 @@ export function timeResolver(_1stTime = Date()) {
  */
 
 export const fetcher = async (url, method, head, data) => {
-  const asis = await axios({
-    method: method,
-    url: url,
+  const asis = await fetch(url, {
+    credentials: "omit",
     headers: head,
-    data: data,
+    method: method,
+    mode: "cors",
+    body: data,
   }).catch(function (error) {
     const obj = {};
     if (error.response) {

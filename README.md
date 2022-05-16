@@ -1,0 +1,3 @@
+## License
+
+© Friday Candour License

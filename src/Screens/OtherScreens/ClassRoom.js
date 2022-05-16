@@ -185,7 +185,7 @@ const TopNavigationBar = ({ view, setView }) => {
       <FlatList
         keyExtractor={(item, index) => "space" + index}
         horizontal
-        showsHorizontalScrollIndicator={false}
+        showsHorizontalScrollIndicator={true}
         data={work}
         renderItem={({ item, index }) => (
           <Gam

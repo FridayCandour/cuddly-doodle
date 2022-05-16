@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { McText, McImage, McTabIcon } from "Components";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import {
@@ -14,56 +14,23 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import styled, { useTheme } from "styled-components/native";
-
-const stats = {
-  allUsers: "1000000000000000000",
-  allAdvertisers: "1000000000000000000",
-  paidUsers: "1000000000000000000",
-  unPaidUsers: "1000000000000000000",
-  allDomain: "1000000000000000000",
-  allCourses: "1000000000000000000",
-  allResources: "1000000000000000000",
-  allAdverts: "1000000000000000000",
-  paidAdvert: "1000000000000000000",
-  lastToken: "1000000000000000000",
-  isTokenActive: true,
-  allDiscovery: "1000000000000000000",
-  inActiveAdverts: "1000000000000000000",
-  liveClass: "1000000000000000000",
-  allPost: "1000000000000000000",
-  notification: "1000000000000000000",
-  activeDiscovery: "1000000000000000000",
-};
-let useful = [],
-  val;
-for (const [k, v] of Object.entries(stats)) {
-  if (typeof v != "boolean" && v.includes(0)) {
-    let zeros = 0;
-    for (let i = v.length; i > 0; i--) {
-      if (v[i] * 1 === 0) {
-        zeros++;
-      }
-    }
-    if (zeros === 18) {
-      val = [...v].splice(v.length, 3) + "millions";
-    }
-  }
-
-  stats[k] = k.toLowerCase();
-  if (stats[k].includes("all")) {
-    stats[k] = k.split("all");
-  }
-  val = v;
-  if (v === true) {
-    val = "yeah!";
-  } else if (v === false) {
-    val = "nop!";
-  }
-  useful.push({ name: stats[k], value: val });
-}
+import { fetcher, uuidSuper } from "../../experiment.js";
 
 const Home = ({ navigation }) => {
-  const { colors } = useTheme();
+  // FIXME: here i will get admin credentials and pass it downwards
+  const [save, saver] = useState(null);
+  const [data, datar] = useState(null);
+  useEffect(() => {
+    // i should retrieve the cre from storage here
+    saver({
+      name: "friday",
+      email: "fridaymichaels662@gmail.com",
+      password: "uiedbooker662",
+      yeah_that_freaking_thing: true,
+      title: "",
+    });
+  }, []);
+
   return (
     <Container>
       <ScrollView>
@@ -78,13 +45,24 @@ const Home = ({ navigation }) => {
             size={34}
           />
         </Header2Section>
-        <StatisticsGamificationBar />
-        <Button
-          onPress={() => {
-            // yeah i will reload stats here
+        <StatisticsGamificationBar data={data} />
+
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={async () => {
+            const domain = await fetcher(
+              "http://localhost:3000/admin/stat",
+              "POST",
+              {},
+              save
+            );
+            if (domain.data) {
+              datar(make(domain.data.data));
+            }
           }}
-          title="Reload Statistics"
-        />
+        >
+          <Texti color="white">Reload</Texti>
+        </TouchableOpacity>
       </ScrollView>
     </Container>
   );
@@ -143,8 +121,10 @@ const Header = ({ navigation }) => {
   );
 };
 
-const StatisticsGamificationBar = () => {
-  // const [title, setTitle] = useState(" Unihub Administrators ");
+const StatisticsGamificationBar = ({ data }) => {
+  if (!data) {
+    //    data = useful;
+  }
   return (
     <TouchableWithoutFeedback
       style={{
@@ -158,11 +138,16 @@ const StatisticsGamificationBar = () => {
         keyExtractor={(i, index) => "_stats" + index}
         showsHorizontalScrollIndicator={false}
         vertical
-        data={useful}
+        data={data}
         contentContainerStyle={{
-          backgroundColor: "grey",
+          backgroundColor: "#4dccc6",
           marginTop: 12,
+          borderRadius: 20,
+          marginBottom: 20,
+          padding: 10,
           paddingVertical: 20,
+          margin: "auto",
+          width: "97.8%",
         }}
         renderItem={({ item, index }) => (
           <TouchableOpacity
@@ -204,20 +189,6 @@ const Container = styled.SafeAreaView`
   flex: 1;
 `;
 // #08b9fc #747896
-const Gam = styled.TouchableOpacity`
-  justify-content: center;
-  align-items: center;
-  height: 40%;
-  width: 100px;
-  padding-top: 17px;
-  padding-bottom: 17px;
-  margin: auto;
-  margin: 5px;
-  border-radius: 12px;
-  flex-direction: row;
-  background-color: #08b9fc;
-`;
-
 const Batch = styled.Text`
   background-color: #eeeeee; //#bbc7cc;
   justify-content: center;
@@ -262,13 +233,13 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   btn: {
-    minWidth: 150,
+    minWidth: 200,
     maxHeight: 100,
     padding: 12,
     borderRadius: 12,
-    color: "black",
     backgroundColor: "#08b9fc",
-    margin: 16,
+    margin: "auto",
+    marginVertical: 10,
     alignItems: "center",
     justifyContent: "center",
   },

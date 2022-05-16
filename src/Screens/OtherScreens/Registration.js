@@ -233,13 +233,18 @@ const DomainModal = ({
             {},
             save
           );
-
           if (domain.error) {
+            setLoading(false);
             setError(true);
           } else {
+            setLoading(false);
             setSuccess(true);
           }
-          setRes(domain.data.message);
+          if (!domain.data) {
+            setRes("you are offline");
+          } else {
+            setRes(domain.data.message);
+          }
         }}
       >
         <Texti color="white">Make Request</Texti>
@@ -302,11 +307,17 @@ const CourseModal = ({
             save
           );
           if (course.error) {
+            setLoading(false);
             setError(true);
           } else {
+            setLoading(false);
             setSuccess(true);
           }
-          setRes(course.data.message);
+          if (!course.data) {
+            setRes("you are offline");
+          } else {
+            setRes(course.data.message);
+          }
         }}
       >
         <Texti color="white">Make Request</Texti>
@@ -336,7 +347,7 @@ const ResourseModal = ({
         placeholder="resource title"
         saver={saver}
         save={save}
-        field="title"
+        field="resourceTitle"
       />
       <Texti color="#faad14">only pdf, json, video</Texti>
       <Input
@@ -369,11 +380,17 @@ const ResourseModal = ({
             save
           );
           if (resource.error) {
+            setLoading(false);
             setError(true);
           } else {
+            setLoading(false);
             setSuccess(true);
           }
-          setRes(resource.data.message);
+          if (!resource.data) {
+            setRes("you are offline");
+          } else {
+            setRes(resource.data.message);
+          }
         }}
       >
         <Texti color="white">Make Request</Texti>
@@ -424,11 +441,17 @@ const NotificationModal = ({
             save
           );
           if (notification.error) {
+            setLoading(false);
             setError(true);
           } else {
+            setLoading(false);
             setSuccess(true);
           }
-          setRes(notification.data.message);
+          if (!notification.data) {
+            setRes("you are offline");
+          } else {
+            setRes(notification.data.message);
+          }
         }}
       >
         <Texti color="white">Make Request</Texti>
@@ -447,9 +470,9 @@ const ContentModal = ({ data }) => {
         vertical
         data={goods}
         contentContainerStyle={{
-          // display: "none",
-          borderRadius: 20,
+          display: "none",
           backgroundColor: "#4dccc6",
+          borderRadius: 20,
           padding: 10,
           width: "97.8%",
         }}
@@ -489,7 +512,15 @@ const ContentModal = ({ data }) => {
   );
 };
 
-const PaymentModal = ({ data }) => {
+const PaymentModal = ({
+  save,
+  saver,
+  data,
+  setLoading,
+  setError,
+  setSuccess,
+  setRes,
+}) => {
   const goods = con(data);
   return (
     <TouchableWithoutFeedback>
@@ -506,7 +537,7 @@ const PaymentModal = ({ data }) => {
           width: "97.8%",
         }}
         renderItem={({ item, index }) => (
-          <TouchableOpacity
+          <View
             style={{
               marginBottom: 10,
               width: "100%",
@@ -542,18 +573,60 @@ const PaymentModal = ({ data }) => {
             >
               <TouchableOpacity
                 style={[styles.btn, { marginHorizontal: 14 }]}
-                onPress={async () => {}}
+                onPress={async () => {
+                  setLoading(true);
+                  save.id = index;
+                  saver(save);
+                  const notification = await fetcher(
+                    "http://localhost:3000/admin/pay",
+                    "POST",
+                    {},
+                    save
+                  );
+                  if (notification.error) {
+                    setLoading(false);
+                    setError(true);
+                  } else {
+                    setLoading(false);
+                    setSuccess(true);
+                  }
+                  if (!notification.data) {
+                    setRes("you are offline");
+                  } else {
+                    setRes(notification.data.message);
+                  }
+                }}
               >
                 <Texti color="lightgreen">Accept</Texti>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.btn, { marginHorizontal: 14 }]}
-                onPress={async () => {}}
+                onPress={async () => {
+                  setLoading(true);
+                  const notification = await fetcher(
+                    "http://localhost:3000/admin/decline",
+                    "POST",
+                    {},
+                    save
+                  );
+                  if (notification.error) {
+                    setLoading(false);
+                    setError(true);
+                  } else {
+                    setLoading(false);
+                    setSuccess(true);
+                  }
+                  if (!notification.data) {
+                    setRes("you are offline");
+                  } else {
+                    setRes(notification.data.message);
+                  }
+                }}
               >
                 <Texti color="red">Decline</Texti>
               </TouchableOpacity>
             </View>
-          </TouchableOpacity>
+          </View>
         )}
       />
     </TouchableWithoutFeedback>
@@ -593,7 +666,6 @@ const ErrorBox = ({ text, setError, setLoading }) => {
         title="Get back!"
         onPress={() => {
           setError(false);
-          setLoading(false);
         }}
       />
     </View>
@@ -637,7 +709,6 @@ const SuccessBox = ({ text, setSuccess, setLoading }) => {
         title="Get back!"
         onPress={() => {
           setSuccess(false);
-          setLoading(false);
         }}
       />
     </View>
@@ -663,67 +734,71 @@ export const FormContainer1 = () => {
   const [isError, setError] = useState(false);
   const [isSuccess, setSuccess] = useState(false);
 
-  return !loading ? (
-    <View
-      style={{
-        width: "100%",
-        marginHorizontal: 4,
-      }}
-    >
-      <Header2Section>
-        <McText left={16} color="#A0A3BD" semi size={18}>
-          All Domains
-        </McText>
-      </Header2Section>
-      <ContentModal data={domains} />
-      <DomainModal
-        endPoint="create"
-        title="Create a Domain"
-        save={save}
-        saver={saver}
-        setLoading={setLoading}
-        setError={setError}
-        setRes={setRes}
-        setSuccess={setSuccess}
-      />
-      <Rules>
-        <Text>NB:</Text>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure it's spelt correctly
-        </McText>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure The domain don't already exists in the database
-        </McText>
-      </Rules>
+  if (!loading && !isSuccess && !isError) {
+    return (
+      <View
+        style={{
+          width: "100%",
+          marginHorizontal: 4,
+        }}
+      >
+        <Header2Section>
+          <McText left={16} color="#A0A3BD" semi size={18}>
+            All Domains
+          </McText>
+        </Header2Section>
+        <ContentModal data={domains} />
+        <DomainModal
+          endPoint="create"
+          title="Create a Domain"
+          save={save}
+          saver={saver}
+          setLoading={setLoading}
+          setError={setError}
+          setRes={setRes}
+          setSuccess={setSuccess}
+        />
+        <Rules>
+          <Text>NB:</Text>
+          <McText left={10} color="#faad14" size={15}>
+            Make sure it's spelt correctly
+          </McText>
+          <McText left={10} color="#faad14" size={15}>
+            Make sure The domain don't already exists in the database
+          </McText>
+        </Rules>
 
-      <Seperator />
-      <DomainModal
-        endPoint="delete"
-        title="Delete a Domain"
-        save={save}
-        saver={saver}
-        setLoading={setLoading}
-        setError={setError}
-        setRes={setRes}
-        setSuccess={setSuccess}
-      />
-      <Rules>
-        <Text>NB:</Text>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure it's spelt correctly
-        </McText>
-        <McText left={10} color="#faad14" size={15}>
-          Make sure The domain already exists in the database
-        </McText>
-      </Rules>
-    </View>
-  ) : isError ? (
-    <ErrorBox text={res} setError={setError} setLoading={setLoading} />
-  ) : isSuccess ? (
-    <SuccessBox text={res} setSuccess={setSuccess} setLoading={setLoading} />
-  ) : (
-    <Loader />
-  );
+        <Seperator />
+        <DomainModal
+          endPoint="delete"
+          title="Delete a Domain"
+          save={save}
+          saver={saver}
+          setLoading={setLoading}
+          setError={setError}
+          setRes={setRes}
+          setSuccess={setSuccess}
+        />
+        <Rules>
+          <Text>NB:</Text>
+          <McText left={10} color="#faad14" size={15}>
+            Make sure it's spelt correctly
+          </McText>
+          <McText left={10} color="#faad14" size={15}>
+            Make sure The domain already exists in the database
+          </McText>
+        </Rules>
+      </View>
+    );
+  } else if (loading) {
+    return <Loader />;
+  } else if (isError) {
+    return <ErrorBox text={res} setError={setError} setLoading={setLoading} />;
+  } else if (isSuccess) {
+    return (
+      <SuccessBox text={res} setSuccess={setSuccess} setLoading={setLoading} />
+    );
+  }
 };
 
 export const FormContainer2 = () => {
@@ -747,7 +822,7 @@ export const FormContainer2 = () => {
   const [isError, setError] = useState(false);
   const [isSuccess, setSuccess] = useState(false);
 
-  return !loading ? (
+  return !loading && !isSuccess && !isError ? (
     <View
       style={{
         width: "100%",
@@ -810,7 +885,6 @@ export const FormContainer3 = () => {
       email: "fridaymichaels662@gmail.com",
       password: "uiedbooker662",
       yeah_that_freaking_thing: true,
-      title: "",
       domain: "",
       type: "",
       courseTitle: "",
@@ -822,7 +896,7 @@ export const FormContainer3 = () => {
   const [loading, setLoading] = useState(false);
   const [isError, setError] = useState(false);
   const [isSuccess, setSuccess] = useState(false);
-  return !loading ? (
+  return !loading && !isSuccess && !isError ? (
     <View
       style={{
         width: "100%",
@@ -878,7 +952,11 @@ export const FormContainer3 = () => {
           } else {
             setSuccess(true);
           }
-          setRes(resource.data.message);
+          if (resource.data) {
+            setRes(resource.data.message);
+          } else {
+            setRes("you are offline");
+          }
         }}
       >
         <Texti color="white">Make Request</Texti>
@@ -904,7 +982,7 @@ export const FormContainer3 = () => {
 
 export const FormContainer7 = () => {
   const [save, saver] = useState({
-    title: "",
+    id: "",
   });
   return (
     <View
@@ -975,7 +1053,7 @@ export const FormContainer6 = () => {
 
 export const FormContainer5 = () => {
   const [save, saver] = useState({
-    title: "",
+    email: "",
   });
   return (
     <View
@@ -1016,9 +1094,24 @@ export const FormContainer5 = () => {
 
 export const FormContainer4 = () => {
   const [save, saver] = useState({
-    title: "",
+    name: "friday",
+    email: "fridaymichaels662@gmail.com",
+    password: "uiedbooker662",
+    yeah_that_freaking_thing: true,
+    id: null,
   });
-  return (
+  // admin/payment/requests
+  useEffect(() => {
+    // i should retrieve the cre from storage here
+    // saver();
+  }, []);
+
+  const [res, setRes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isError, setError] = useState(false);
+  const [isSuccess, setSuccess] = useState(false);
+
+  return !loading && !isSuccess && !isError ? (
     <View
       style={{
         width: "100%",
@@ -1031,11 +1124,22 @@ export const FormContainer4 = () => {
           All payment requests
         </McText>
       </Header2Section>
-      <PaymentModal data={paymentRequests} />
-      {
-        //FIXME: the response container not ready
-      }
+      <PaymentModal
+        data={paymentRequests}
+        save={save}
+        saver={saver}
+        setRes={setRes}
+        setLoading={setLoading}
+        setError={setError}
+        setSuccess={setSuccess}
+      />
     </View>
+  ) : isError ? (
+    <ErrorBox text={res} setError={setError} setLoading={setLoading} />
+  ) : isSuccess ? (
+    <SuccessBox text={res} setSuccess={setSuccess} setLoading={setLoading} />
+  ) : (
+    <Loader />
   );
 };
 
@@ -1060,7 +1164,7 @@ export const FormContainer8 = () => {
   const [loading, setLoading] = useState(false);
   const [isError, setError] = useState(false);
   const [isSuccess, setSuccess] = useState(false);
-  return !loading ? (
+  return !loading && !isSuccess && !isError ? (
     <View
       style={{
         width: "100%",

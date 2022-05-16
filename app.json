@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "unihub-backend",
-    "slug": "unihub-backend",
+    "name": "unihub-admin",
+    "slug": "unihub-admin",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -33,7 +33,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "unihub-backend\n\n",
+    "description": "unihub-admin\n\n",
     "githubUrl": "https://github.com/FridayCandour/unihub-backend"
   }
 }
